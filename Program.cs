@@ -36,11 +36,7 @@ class Program
     static void Main(string[] args)
     {
         var key = DetermineKey(args);
-
-        if (!SendKeyPressToBizHawk(key))
-        {
-            Console.WriteLine("Failed to send a key press to BizHawk!");
-        }
+        SendKeyPressToBizHawk(key);
     }
 
     private static int DetermineKey(string[] args)
@@ -78,19 +74,16 @@ class Program
         }
     }
 
-    private static bool SendKeyPressToBizHawk(int key)
+    private static void SendKeyPressToBizHawk(int key)
     {
         var allProcesses = Process.GetProcesses();
 
         // Find the BizHawk process, as we need its process ID (PID).
-        var bizHawkProcess = allProcesses.FirstOrDefault(process => process.MainWindowTitle.Contains("BizHawk"));
+        var bizHawkProcess = allProcesses.First(process =>
+            process.MainWindowTitle.Contains("BizHawk") && process.ProcessName.Contains("EmuHawk")
+        );
 
-        if (bizHawkProcess == null)
-        {
-            return false;
-        }
-
-        // // This part comes from the GitHub issue:
+        // This part comes from the GitHub issue:
         // https://github.com/TASEmulators/BizHawk/issues/477#issuecomment-131264972
         var pipeName = "bizhawk-pid-" + bizHawkProcess.Id + "-IPCKeyInput";
 
@@ -103,13 +96,12 @@ class Program
 
         stream.Connect();
 
+        // The below code segment sends the actual key press to BizHawk.
         var writer = new BinaryWriter(stream);
         Thread.Sleep(KEY_PRESS_DELAY_MILLISECONDS);
         writer.Write(key | 0x80000000);
         Thread.Sleep(KEY_PRESS_DELAY_MILLISECONDS);
-        writer.Write(key); // Doing this again is like we are releasing the key
-
-        return true;
+        writer.Write(key); // doing this again is like we are releasing the key
     }
 
 }
