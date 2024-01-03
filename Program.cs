@@ -10,7 +10,7 @@ using System.IO.Pipes;
 class Program
 {
 
-    // these key values come from here:
+    // These key values come from here:
     // https://github.com/AndersMalmgren/FreePIE/blob/master/FreePIE.Core.Plugins/KeyboardPlugin.cs
     private static readonly int KEY_F1 = 54;
     private static readonly int KEY_F2 = 55;
@@ -27,6 +27,11 @@ class Program
     private static readonly int KEY_F13 = 66;
     private static readonly int KEY_F14 = 67;
     private static readonly int KEY_F15 = 68;
+
+    // This value can probably be tweaked some amount, but I don't really know what would
+    // be considered the "minimum viable value". However in testing, it seems that 96 is
+    // perfectly good.
+    private static readonly int KEY_PRESS_DELAY_MILLISECONDS = 96;
 
     static void Main(string[] args)
     {
@@ -66,9 +71,9 @@ class Program
         stream.Connect();
 
         var bw = new BinaryWriter(stream);
-        Thread.Sleep(96);
+        Thread.Sleep(KEY_PRESS_DELAY_MILLISECONDS);
         bw.Write(key | 0x80000000);
-        Thread.Sleep(96);
+        Thread.Sleep(KEY_PRESS_DELAY_MILLISECONDS);
         bw.Write(key); // Doing this again is like we are releasing the key
     }
 
