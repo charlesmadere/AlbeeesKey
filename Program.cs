@@ -36,7 +36,11 @@ class Program
     static void Main(string[] args)
     {
         var key = DetermineKey(args);
-        SendKeyPressToBizHawk(key);
+
+        if (!SendKeyPressToBizHawk(key))
+        {
+            Console.WriteLine("Failed to send a key press to BizHawk!");
+        }
     }
 
     private static int DetermineKey(string[] args)
@@ -74,12 +78,17 @@ class Program
         }
     }
 
-    private static void SendKeyPressToBizHawk(int key)
+    private static bool SendKeyPressToBizHawk(int key)
     {
         var allProcesses = Process.GetProcesses();
 
         // Find the BizHawk process, as we need its process ID (PID).
-        var bizHawkProcess = allProcesses.First(process => process.MainWindowTitle.Contains("BizHawk"));
+        var bizHawkProcess = allProcesses.FirstOrDefault(process => process.MainWindowTitle.Contains("BizHawk"));
+
+        if (bizHawkProcess == null)
+        {
+            return false;
+        }
 
         // // This part comes from the GitHub issue:
         // https://github.com/TASEmulators/BizHawk/issues/477#issuecomment-131264972
@@ -99,6 +108,8 @@ class Program
         writer.Write(key | 0x80000000);
         Thread.Sleep(KEY_PRESS_DELAY_MILLISECONDS);
         writer.Write(key); // Doing this again is like we are releasing the key
+
+        return true;
     }
 
 }
