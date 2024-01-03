@@ -46,8 +46,32 @@ class Program
             return KEY_F8;
         }
 
-        // TODO
-        return KEY_F8;
+        var keyArgument = args[0];
+
+        if (string.IsNullOrWhiteSpace(keyArgument))
+        {
+            return KEY_F8;
+        }
+
+        switch (keyArgument.ToLower())
+        {
+            case "f1": return KEY_F1;
+            case "f2": return KEY_F2;
+            case "f3": return KEY_F3;
+            case "f4": return KEY_F4;
+            case "f5": return KEY_F5;
+            case "f6": return KEY_F6;
+            case "f7": return KEY_F7;
+            case "f8": return KEY_F8;
+            case "f9": return KEY_F9;
+            case "f10": return KEY_F10;
+            case "f11": return KEY_F11;
+            case "f12": return KEY_F12;
+            case "f13": return KEY_F13;
+            case "f14": return KEY_F14;
+            case "f15": return KEY_F15;
+            default: return KEY_F8;
+        }
     }
 
     private static void SendKeyPressToBizHawk(int key)
