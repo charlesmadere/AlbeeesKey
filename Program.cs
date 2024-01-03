@@ -30,14 +30,35 @@ class Program
 
     static void Main(string[] args)
     {
-        var key = KEY_F8;
+        var key = DetermineKey(args);
+        SendKeyPressToBizHawk(key);
+    }
 
+    private static int DetermineKey(string[] args)
+    {
+        if (args == null || args.Length == 0)
+        {
+            return KEY_F8;
+        }
+
+        // TODO
+        return KEY_F8;
+    }
+
+    private static void SendKeyPressToBizHawk(int key)
+    {
         var allProcesses = Process.GetProcesses();
+
+        // Find the BizHawk process, as we need its process ID (PID).
         var bizHawkProcess = allProcesses.First(process => process.MainWindowTitle.Contains("BizHawk"));
+
+        // // This part comes from the GitHub issue:
+        // https://github.com/TASEmulators/BizHawk/issues/477#issuecomment-131264972
+        var pipeName = "bizhawk-pid-" + bizHawkProcess.Id + "-IPCKeyInput";
 
         var stream = new NamedPipeClientStream(
             "localhost",
-            "bizhawk-pid-" + bizHawkProcess.Id + "-IPCKeyInput",
+            pipeName,
             PipeDirection.Out,
             PipeOptions.None
         );
