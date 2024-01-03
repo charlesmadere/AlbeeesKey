@@ -70,11 +70,11 @@ class Program
 
         stream.Connect();
 
-        var bw = new BinaryWriter(stream);
+        var writer = new BinaryWriter(stream);
         Thread.Sleep(KEY_PRESS_DELAY_MILLISECONDS);
-        bw.Write(key | 0x80000000);
+        writer.Write(key | 0x80000000);
         Thread.Sleep(KEY_PRESS_DELAY_MILLISECONDS);
-        bw.Write(key); // Doing this again is like we are releasing the key
+        writer.Write(key); // Doing this again is like we are releasing the key
     }
 
 }
