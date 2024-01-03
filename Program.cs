@@ -1,7 +1,11 @@
 ﻿namespace AlbeeesKey;
+
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+
+// A majority of the knowledge for writing this code came from this GitHub issue:
+// https://github.com/TASEmulators/BizHawk/issues/477
 
 class Program
 {
