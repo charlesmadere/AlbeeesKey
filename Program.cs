@@ -298,7 +298,6 @@ public class Program
 
         // the below code segment sends the actual key press to BizHawk
         var writer = new BinaryWriter(stream);
-        Thread.Sleep(timeMillis);
         writer.Write(keyPress.bizhawkValue | 0x80000000);
         Thread.Sleep(timeMillis);
         writer.Write(keyPress.bizhawkValue); // doing this again is like we are releasing the key
