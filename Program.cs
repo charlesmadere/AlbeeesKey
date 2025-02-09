@@ -73,7 +73,8 @@ public class Program
     private static readonly int BIZHAWK_KEY_F14 = 67;
     private static readonly int BIZHAWK_KEY_F15 = 68;
 
-    private enum Key {
+    private enum Key
+    {
         D0,
         D1,
         D2,
@@ -138,7 +139,8 @@ public class Program
 
     private record KeyData(Key key, int bizhawkValue, string humanName);
 
-    private static readonly List<KeyData> KEYS = [
+    private static readonly List<KeyData> KEYS =
+    [
         new(Key.D0, BIZHAWK_KEY_D0, "0"),
         new(Key.D1, BIZHAWK_KEY_D1, "1"),
         new(Key.D2, BIZHAWK_KEY_D2, "2"),
@@ -209,11 +211,12 @@ public class Program
     public static void Main(string[]? args)
     {
         var keyPress = DetermineKeyPress(args);
-        var timeMillis = DetermineKeyPressTime(args);
+        var timeMillis = DetermineKeyPressTimeMillis(args);
         SendKeyPressToBizHawk(keyPress, timeMillis);
     }
 
-    private static KeyData DefaultKeyPress() {
+    private static KeyData DefaultKeyPress()
+    {
         var defaultKey = KEYS.First(key =>
             key.key == Key.F8
         );
@@ -250,7 +253,7 @@ public class Program
         return keyPress;
     }
 
-    private static int DetermineKeyPressTime(string[]? args)
+    private static int DetermineKeyPressTimeMillis(string[]? args)
     {
         if (args == null || args.Length <= 1)
         {
@@ -264,13 +267,28 @@ public class Program
             return KEY_PRESS_DELAY_MILLISECONDS;
         }
 
+        long timeMillis;
+
         try
         {
-            return int.Parse(timeMillisArgument);
+            timeMillis = long.Parse(timeMillisArgument);
         }
         catch
         {
             throw new Exception($"Unable to parse the given time argument into milliseconds: \"{timeMillisArgument}\"");
+        }
+
+        if (timeMillis < 1)
+        {
+            throw new Exception($"Parsed the given time argument into milliseconds, but it is too small: \"{timeMillis}\"");
+        }
+        else if (timeMillis >= int.MaxValue)
+        {
+            throw new Exception($"Parsed the given time argument into milliseconds, but it is too large: \"{timeMillis}\"");
+        }
+        else
+        {
+            return Convert.ToInt32(timeMillis);
         }
     }
 
@@ -283,7 +301,7 @@ public class Program
             process.MainWindowTitle.Contains("BizHawk") && process.ProcessName.Contains("EmuHawk")
         );
 
-        // this part comes from the GitHub issue:
+        // most of this part comes from the GitHub issue:
         // https://github.com/TASEmulators/BizHawk/issues/477#issuecomment-131264972
         var pipeName = "bizhawk-pid-" + bizHawkProcess.Id + "-IPCKeyInput";
 
